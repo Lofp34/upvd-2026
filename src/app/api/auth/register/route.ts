@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { startups } from "@/db/schema";
 import { generateAccessCode, createToken, setSessionCookie } from "@/lib/auth";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,24 +16,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique access code
-    let accessCode: string;
-    let attempts = 0;
-    do {
-      accessCode = generateAccessCode();
-      const existing = await db.query.startups.findFirst({
-        where: eq(startups.accessCode, accessCode),
-      });
-      if (!existing) break;
-      attempts++;
-    } while (attempts < 10);
+    // Check if startup already exists with same name + founder
+    const existing = await db.query.startups.findFirst({
+      where: and(
+        eq(startups.startupName, startupName.trim()),
+        eq(startups.founderName, founderName.trim())
+      ),
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "Une startup avec ce nom et ce fondateur existe déjà. Utilise la connexion." },
+        { status: 409 }
+      );
+    }
+
+    // Generate access code (kept for internal reference)
+    const accessCode = generateAccessCode();
 
     const [startup] = await db
       .insert(startups)
       .values({
         accessCode,
-        startupName,
-        founderName,
+        startupName: startupName.trim(),
+        founderName: founderName.trim(),
         sector: sector || null,
         stage: stage || null,
       })
@@ -47,7 +53,6 @@ export async function POST(request: NextRequest) {
         id: startup.id,
         startupName: startup.startupName,
         founderName: startup.founderName,
-        accessCode: startup.accessCode,
       },
     });
   } catch (error) {

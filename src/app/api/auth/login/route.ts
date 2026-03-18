@@ -2,27 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { startups } from "@/db/schema";
 import { createToken, setSessionCookie } from "@/lib/auth";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { accessCode } = body;
+    const { startupName, founderName } = body;
 
-    if (!accessCode) {
+    if (!startupName || !founderName) {
       return NextResponse.json(
-        { error: "Le code d'accès est requis." },
+        { error: "Le nom de la startup et du fondateur sont requis." },
         { status: 400 }
       );
     }
 
     const startup = await db.query.startups.findFirst({
-      where: eq(startups.accessCode, accessCode.toUpperCase().trim()),
+      where: and(
+        eq(startups.startupName, startupName.trim()),
+        eq(startups.founderName, founderName.trim())
+      ),
     });
 
     if (!startup) {
       return NextResponse.json(
-        { error: "Code d'accès invalide." },
+        { error: "Aucun compte trouvé avec ce nom de startup et de fondateur." },
         { status: 401 }
       );
     }

@@ -15,7 +15,6 @@ export default function RegisterPage() {
     sector: "",
     stage: "",
   });
-  const [accessCode, setAccessCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,45 +36,12 @@ export default function RegisterPage() {
         return;
       }
 
-      setAccessCode(data.startup.accessCode);
+      router.push("/dashboard");
     } catch {
       setError("Erreur réseau. Réessaie.");
     } finally {
       setLoading(false);
     }
-  }
-
-  if (accessCode) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-blue-50 to-white p-4">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-green-600 text-2xl">&#10003;</span>
-            </div>
-            <h2 className="text-xl font-semibold text-brand-blue-700 mb-2">
-              Inscription réussie !
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Voici ton code d&apos;accès. Note-le précieusement, il te permettra de te reconnecter.
-            </p>
-            <div className="bg-brand-blue-50 rounded-xl p-6 mb-6">
-              <p className="text-sm text-brand-blue-700 mb-2">Ton code d&apos;accès</p>
-              <p className="text-4xl font-mono font-bold tracking-widest text-brand-coral-500">
-                {accessCode}
-              </p>
-            </div>
-            <Button
-              onClick={() => router.push("/dashboard")}
-              className="w-full"
-              size="lg"
-            >
-              Commencer la formation
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -140,7 +106,7 @@ export default function RegisterPage() {
               onClick={() => router.push("/")}
               className="text-sm text-brand-blue-500 hover:underline"
             >
-              J&apos;ai déjà un code d&apos;accès
+              J&apos;ai déjà un compte
             </button>
           </div>
         </div>

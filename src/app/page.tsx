@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/Input";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [accessCode, setAccessCode] = useState("");
+  const [startupName, setStartupName] = useState("");
+  const [founderName, setFounderName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessCode }),
+        body: JSON.stringify({ startupName, founderName }),
       });
 
       const data = await res.json();
@@ -56,20 +57,30 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
-              label="Code d'accès"
-              placeholder="Ex: BX7K2M"
-              value={accessCode}
-              onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
-              maxLength={6}
-              className="text-center text-2xl tracking-widest font-mono"
-              error={error}
+              label="Nom de la startup"
+              placeholder="Ex: TechVision"
+              value={startupName}
+              onChange={(e) => setStartupName(e.target.value)}
+              required
               autoFocus
             />
+            <Input
+              label="Nom du fondateur"
+              placeholder="Ex: Marie Dupont"
+              value={founderName}
+              onChange={(e) => setFounderName(e.target.value)}
+              required
+            />
+
+            {error && (
+              <p className="text-sm text-red-500 bg-red-50 p-3 rounded-lg">{error}</p>
+            )}
+
             <Button
               type="submit"
               className="w-full"
               size="lg"
-              disabled={loading || accessCode.length < 6}
+              disabled={loading || !startupName || !founderName}
             >
               {loading ? "Connexion..." : "Se connecter"}
             </Button>

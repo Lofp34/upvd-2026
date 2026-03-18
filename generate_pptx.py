@@ -542,7 +542,7 @@ add_text(slide, Inches(0.8), Inches(2.1), Inches(3), Inches(0.5),
 cols_data = [
     ("ENJEU APPARENT", "Ce que la personne semble vouloir dans la relation avec la startup", ORANGE),
     ("ENJEU PROFOND", "Ce qui l'anime vraiment dans son propre contexte", RED_SOFT),
-    ("PONT", "Le lien logique ET émotionnel entre votre startup et cet enjeu", GREEN),
+    ("CONNEXION", "Le lien logique ET émotionnel entre votre startup et cet enjeu", GREEN),
 ]
 for i, (title, desc, col) in enumerate(cols_data):
     x = Inches(0.8) + i * Inches(4.1)
@@ -579,7 +579,7 @@ add_text(slide, Inches(0.8), Inches(1.3), Inches(11.5), Inches(0.8),
 examples = [
     ("ENJEU APPARENT", "Vous aider à réussir", ORANGE),
     ("ENJEU PROFOND", "Démontrer la réussite de sa cohorte\nJustifier les financements du programme\nCréer de l'emploi local\nRenforcer sa propre crédibilité", RED_SOFT),
-    ("PONT", "Votre traction rapide est\nSA meilleure preuve de valeur", GREEN),
+    ("CONNEXION", "Votre traction rapide est\nSA meilleure preuve de valeur", GREEN),
 ]
 for i, (title, content, col) in enumerate(examples):
     x = Inches(0.8) + i * Inches(4.1)
@@ -641,7 +641,7 @@ add_text(slide, Inches(0.8), Inches(0.8), Inches(11.5), Inches(0.8),
          "La suite du programme", font_size=36, color=WHITE, bold=True)
 
 sessions = [
-    ("S2", "Les Ponts d'Enjeux", ACCENT),
+    ("S2", "Connexion des Enjeux", ACCENT),
     ("S3", "Les Canaux d'Accès", GREEN),
     ("S4", "Structurer l'Entretien", ORANGE),
     ("S5-6", "Découverte & Maïeutique", YELLOW),

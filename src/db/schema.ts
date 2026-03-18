@@ -33,6 +33,7 @@ export const startups = pgTable("startups", {
   id: uuid("id").defaultRandom().primaryKey(),
   accessCode: text("access_code").unique().notNull(),
   startupName: text("startup_name").notNull(),
+  password: text("password").notNull().default(""),
   sector: text("sector"),
   stage: text("stage"),
   founderName: text("founder_name").notNull(),

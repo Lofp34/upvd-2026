@@ -2,30 +2,36 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { startups } from "@/db/schema";
 import { createToken, setSessionCookie } from "@/lib/auth";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { startupName, founderName } = body;
+    const { startupName, password } = body;
 
-    if (!startupName || !founderName) {
+    if (!startupName || !password) {
       return NextResponse.json(
-        { error: "Le nom de la startup et du fondateur sont requis." },
+        { error: "Le nom de la startup et le mot de passe sont requis." },
         { status: 400 }
       );
     }
 
     const startup = await db.query.startups.findFirst({
-      where: and(
-        eq(startups.startupName, startupName.trim()),
-        eq(startups.founderName, founderName.trim())
-      ),
+      where: eq(startups.startupName, startupName.trim()),
     });
 
-    if (!startup) {
+    if (!startup || !startup.password) {
       return NextResponse.json(
-        { error: "Aucun compte trouvé avec ce nom de startup et de fondateur." },
+        { error: "Startup introuvable ou mot de passe non défini." },
+        { status: 401 }
+      );
+    }
+
+    const valid = await bcrypt.compare(password, startup.password);
+    if (!valid) {
+      return NextResponse.json(
+        { error: "Mot de passe incorrect." },
         { status: 401 }
       );
     }

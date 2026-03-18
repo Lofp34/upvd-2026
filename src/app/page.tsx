@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/Input";
 export default function LoginPage() {
   const router = useRouter();
   const [startupName, setStartupName] = useState("");
-  const [founderName, setFounderName] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,7 +21,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ startupName, founderName }),
+        body: JSON.stringify({ startupName, password }),
       });
 
       const data = await res.json();
@@ -65,10 +65,11 @@ export default function LoginPage() {
               autoFocus
             />
             <Input
-              label="Nom du fondateur"
-              placeholder="Ex: Marie Dupont"
-              value={founderName}
-              onChange={(e) => setFounderName(e.target.value)}
+              label="Mot de passe"
+              placeholder="Ton mot de passe"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
 
@@ -80,7 +81,7 @@ export default function LoginPage() {
               type="submit"
               className="w-full"
               size="lg"
-              disabled={loading || !startupName || !founderName}
+              disabled={loading || !startupName || !password}
             >
               {loading ? "Connexion..." : "Se connecter"}
             </Button>

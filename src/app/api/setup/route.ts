@@ -27,6 +27,7 @@ export async function GET() {
       id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
       access_code TEXT UNIQUE NOT NULL,
       startup_name TEXT NOT NULL,
+      password TEXT NOT NULL DEFAULT '',
       sector TEXT,
       stage TEXT,
       founder_name TEXT NOT NULL,
@@ -37,6 +38,9 @@ export async function GET() {
       created_at TIMESTAMP NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMP NOT NULL DEFAULT NOW()
     )`;
+
+    // Add password column if missing (for existing databases)
+    await sql`ALTER TABLE startups ADD COLUMN IF NOT EXISTS password TEXT NOT NULL DEFAULT ''`;
 
     await sql`CREATE TABLE IF NOT EXISTS stakeholders (
       id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

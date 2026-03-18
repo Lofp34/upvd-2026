@@ -2,36 +2,41 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { startups } from "@/db/schema";
 import { generateAccessCode, createToken, setSessionCookie } from "@/lib/auth";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { startupName, founderName, sector, stage } = body;
+    const { startupName, founderName, password, sector, stage } = body;
 
-    if (!startupName || !founderName) {
+    if (!startupName || !founderName || !password) {
       return NextResponse.json(
-        { error: "Le nom de la startup et du fondateur sont requis." },
+        { error: "Le nom de la startup, du fondateur et le mot de passe sont requis." },
         { status: 400 }
       );
     }
 
-    // Check if startup already exists with same name + founder
+    if (password.length < 4) {
+      return NextResponse.json(
+        { error: "Le mot de passe doit contenir au moins 4 caractères." },
+        { status: 400 }
+      );
+    }
+
+    // Check if startup name already taken
     const existing = await db.query.startups.findFirst({
-      where: and(
-        eq(startups.startupName, startupName.trim()),
-        eq(startups.founderName, founderName.trim())
-      ),
+      where: eq(startups.startupName, startupName.trim()),
     });
 
     if (existing) {
       return NextResponse.json(
-        { error: "Une startup avec ce nom et ce fondateur existe déjà. Utilise la connexion." },
+        { error: "Ce nom de startup est déjà pris. Choisis-en un autre ou connecte-toi." },
         { status: 409 }
       );
     }
 
-    // Generate access code (kept for internal reference)
+    const hashedPassword = await bcrypt.hash(password, 10);
     const accessCode = generateAccessCode();
 
     const [startup] = await db
@@ -40,6 +45,7 @@ export async function POST(request: NextRequest) {
         accessCode,
         startupName: startupName.trim(),
         founderName: founderName.trim(),
+        password: hashedPassword,
         sector: sector || null,
         stage: stage || null,
       })

@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     startupName: "",
     founderName: "",
+    password: "",
     sector: "",
     stage: "",
   });
@@ -72,6 +73,14 @@ export default function RegisterPage() {
               onChange={(e) => setForm({ ...form, founderName: e.target.value })}
               required
             />
+            <Input
+              label="Mot de passe *"
+              placeholder="Choisis un mot de passe"
+              type="password"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              required
+            />
             <Select
               label="Secteur d'activité"
               options={[...SECTORS]}
@@ -95,7 +104,7 @@ export default function RegisterPage() {
               type="submit"
               className="w-full"
               size="lg"
-              disabled={loading || !form.startupName || !form.founderName}
+              disabled={loading || !form.startupName || !form.founderName || form.password.length < 4}
             >
               {loading ? "Inscription..." : "Inscrire ma startup"}
             </Button>
